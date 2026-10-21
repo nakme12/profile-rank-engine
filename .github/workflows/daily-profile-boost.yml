@@ -18,6 +18,7 @@ on:
           - naukri
           - instahyre
           - wellfound
+          - linkedin
 
 permissions:
   contents: read
@@ -49,6 +50,7 @@ jobs:
           echo "${{ secrets.NAUKRI_AUTH_STATE }}" | base64 -d > auth/naukri-state.json 2>/dev/null || true
           echo "${{ secrets.INSTAHYRE_AUTH_STATE }}" | base64 -d > auth/instahyre-state.json 2>/dev/null || true
           echo "${{ secrets.WELLFOUND_AUTH_STATE }}" | base64 -d > auth/wellfound-state.json 2>/dev/null || true
+          echo "${{ secrets.LINKEDIN_AUTH_STATE }}" | base64 -d > auth/linkedin-state.json 2>/dev/null || true
 
       - name: Run Multi-Platform Rank Booster
         run: npx tsx scripts/update-all.ts

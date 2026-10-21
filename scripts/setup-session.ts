@@ -9,7 +9,8 @@ const platform = process.argv[2] || 'naukri';
 const PLATFORM_URLS: Record<string, string> = {
   naukri: 'https://www.naukri.com/nlogin/login',
   instahyre: 'https://www.instahyre.com/login/',
-  wellfound: 'https://wellfound.com/login'
+  wellfound: 'https://wellfound.com/login',
+  linkedin: 'https://www.linkedin.com/login'
 };
 
 async function main() {

@@ -1,11 +1,12 @@
 import { updateNaukri } from './update-naukri';
 import { updateWellfound } from './update-wellfound';
 import { updateInstahyre } from './update-instahyre';
+import { updateLinkedIn } from './update-linkedin';
 
 async function main() {
   console.log(`\n======================================================`);
   console.log(`🚀 STARTING UNIFIED MULTI-PLATFORM PROFILE RANK BOOST`);
-  console.log(`Target: Naukri | Instahyre | Wellfound`);
+  console.log(`Target: Naukri | Instahyre | Wellfound | LinkedIn`);
   console.log(`======================================================\n`);
 
   const results: Record<string, string> = {};
@@ -32,6 +33,14 @@ async function main() {
     results['Wellfound'] = '✅ Success (Activity & preferences pinged)';
   } catch (e: any) {
     results['Wellfound'] = `❌ Failed: ${e.message}`;
+  }
+
+  // 4. LinkedIn
+  try {
+    await updateLinkedIn();
+    results['LinkedIn'] = '✅ Success (Active Today session refreshed)';
+  } catch (e: any) {
+    results['LinkedIn'] = `❌ Failed: ${e.message}`;
   }
 
   console.log(`\n======================================================`);
