@@ -2,8 +2,10 @@ name: Daily Multi-Platform Profile Rank Booster
 
 on:
   schedule:
-    # 9:00 AM IST daily (3:30 AM UTC)
+    # 9:00 AM IST daily (3:30 AM UTC) - Morning recruiter sourcing rush
     - cron: '30 3 * * *'
+    # 2:30 PM IST daily (9:00 AM UTC) - Post-lunch second sourcing wave
+    - cron: '0 9 * * *'
 
   # Manual on-demand trigger (from GitHub Mobile App or Web)
   workflow_dispatch:
