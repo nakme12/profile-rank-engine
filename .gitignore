@@ -1,0 +1,7 @@
+node_modules/
+playwright/.auth/
+auth/*.json
+artifacts/
+*.log
+.DS_Store
+Thumbs.db
