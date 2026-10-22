@@ -32,15 +32,16 @@ export async function updateWellfound(): Promise<boolean> {
     await page.goto(WELLFOUND_PROFILE_URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
     await page.waitForTimeout(4000);
 
-    // Strict auth check: Wellfound must not show Log in button or public guest state
-    const isGuest = await page.evaluate(() => {
+    // Strict assertion: candidate dashboard indicators
+    const isCandidateLoggedIn = await page.evaluate(() => {
       const text = document.body.innerText;
-      const hasLogIn = !!Array.from(document.querySelectorAll('a, button')).find(el => el.innerText && el.innerText.trim() === 'Log in');
-      const hasUserAvatar = !!document.querySelector('[data-test="header-user-menu"], img[alt*="avatar"], .styles_avatar__');
-      return hasLogIn || !hasUserAvatar;
+      // When logged in as candidate, navigation contains 'Profile', 'Applied', 'Messages', 'Ready to interview'
+      const hasCandidateNav = text.includes('Profile') && text.includes('Applied') && text.includes('Messages');
+      const hasLogInBtn = Array.from(document.querySelectorAll('a, button')).some(el => el.innerText && el.innerText.trim() === 'Log in');
+      return hasCandidateNav && !hasLogInBtn;
     });
 
-    if (isGuest || page.url().includes('login')) {
+    if (!isCandidateLoggedIn) {
       throw new Error('Wellfound session is NOT logged in or expired. Please re-run npm run setup:wellfound.');
     }
 
