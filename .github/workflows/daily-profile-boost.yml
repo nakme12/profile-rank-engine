@@ -2,10 +2,10 @@ name: Daily Multi-Platform Profile Rank Booster
 
 on:
   schedule:
-    # 9:00 AM IST daily (3:30 AM UTC) - Morning recruiter sourcing rush
-    - cron: '30 3 * * *'
-    # 2:30 PM IST daily (9:00 AM UTC) - Post-lunch second sourcing wave
-    - cron: '0 9 * * *'
+    # Morning window: Trigger at 8:45 AM IST (3:15 AM UTC)
+    - cron: '15 3 * * *'
+    # Afternoon window: Trigger at 2:15 PM IST (8:45 AM UTC)
+    - cron: '45 8 * * *'
 
   # Manual on-demand trigger (from GitHub Mobile App or Web)
   workflow_dispatch:
@@ -20,6 +20,7 @@ on:
           - naukri
           - instahyre
           - wellfound
+          - cutshort
 
 permissions:
   contents: read
@@ -51,6 +52,15 @@ jobs:
           echo "${{ secrets.NAUKRI_AUTH_STATE }}" | base64 -d > auth/naukri-state.json 2>/dev/null || true
           echo "${{ secrets.INSTAHYRE_AUTH_STATE }}" | base64 -d > auth/instahyre-state.json 2>/dev/null || true
           echo "${{ secrets.WELLFOUND_AUTH_STATE }}" | base64 -d > auth/wellfound-state.json 2>/dev/null || true
+          echo "${{ secrets.CUTSHORT_AUTH_STATE }}" | base64 -d > auth/cutshort-state.json 2>/dev/null || true
+
+      - name: Jitter Delay (Anti-bot natural window 0-25 mins)
+        if: github.event_name == 'schedule'
+        run: |
+          # Random sleep between 60s and 1500s (0 to 25 mins)
+          DELAY=$(( (RANDOM % 1440) + 60 ))
+          echo "Simulating natural human start. Sleeping for ${DELAY} seconds..."
+          sleep ${DELAY}
 
       - name: Run Multi-Platform Rank Booster
         run: npx tsx scripts/update-all.ts

@@ -1,11 +1,12 @@
 import { updateNaukri } from './update-naukri';
 import { updateWellfound } from './update-wellfound';
 import { updateInstahyre } from './update-instahyre';
+import { updateCutshort } from './update-cutshort';
 
 async function main() {
   console.log(`\n======================================================`);
   console.log(`🚀 STARTING UNIFIED MULTI-PLATFORM PROFILE RANK BOOST`);
-  console.log(`Target: Naukri | Instahyre | Wellfound (LinkedIn Excluded for Safety)`);
+  console.log(`Target: Naukri | Instahyre | Wellfound | Cutshort (LinkedIn Excluded)`);
   console.log(`======================================================\n`);
 
   const results: Record<string, string> = {};
@@ -32,6 +33,14 @@ async function main() {
     results['Wellfound'] = '✅ Success (Activity & preferences pinged)';
   } catch (e: any) {
     results['Wellfound'] = `❌ Failed: ${e.message}`;
+  }
+
+  // 4. Cutshort
+  try {
+    await updateCutshort();
+    results['Cutshort'] = '✅ Success (Active Candidate status refreshed)';
+  } catch (e: any) {
+    results['Cutshort'] = `❌ Failed: ${e.message}`;
   }
 
   console.log(`\n======================================================`);
