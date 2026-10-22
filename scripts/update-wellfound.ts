@@ -32,8 +32,16 @@ export async function updateWellfound(): Promise<boolean> {
     await page.goto(WELLFOUND_PROFILE_URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
     await page.waitForTimeout(4000);
 
-    if (page.url().includes('login')) {
-      throw new Error('Wellfound session expired. Please re-run setup-session.');
+    // Strict auth check: Wellfound must not show Log in button or public guest state
+    const isGuest = await page.evaluate(() => {
+      const text = document.body.innerText;
+      const hasLogIn = !!Array.from(document.querySelectorAll('a, button')).find(el => el.innerText && el.innerText.trim() === 'Log in');
+      const hasUserAvatar = !!document.querySelector('[data-test="header-user-menu"], img[alt*="avatar"], .styles_avatar__');
+      return hasLogIn || !hasUserAvatar;
+    });
+
+    if (isGuest || page.url().includes('login')) {
+      throw new Error('Wellfound session is NOT logged in or expired. Please re-run npm run setup:wellfound.');
     }
 
     log(`Loaded Wellfound URL: ${page.url()}`);
