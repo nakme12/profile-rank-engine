@@ -2,6 +2,7 @@ import { updateNaukri } from './update-naukri';
 import { updateWellfound } from './update-wellfound';
 import { updateInstahyre } from './update-instahyre';
 import { updateCutshort } from './update-cutshort';
+import { updateHirist } from './update-hirist';
 
 // Mode from CLI argument or environment: 'morning' | 'afternoon' | 'evening' | 'all'
 const targetMode = process.argv[2] ?? process.env.BOOST_MODE ?? 'all';
@@ -45,7 +46,17 @@ async function main() {
     }
   }
 
-  // 4. WELLFOUND (2 times: Afternoon ~2:30 PM & Evening ~7:00 PM for US/Remote founders)
+  // 4. HIRIST (2 times: Morning ~9 AM & Afternoon ~2:30 PM)
+  if (['all', 'morning', 'afternoon'].includes(targetMode)) {
+    try {
+      await updateHirist();
+      results['Hirist'] = '✅ Success (Jobfeed activity refreshed)';
+    } catch (e: any) {
+      results['Hirist'] = `❌ Failed: ${e.message}`;
+    }
+  }
+
+  // 5. WELLFOUND (2 times: Afternoon ~2:30 PM & Evening ~7:00 PM for US/Remote founders)
   if (['all', 'afternoon', 'evening'].includes(targetMode)) {
     try {
       await updateWellfound();
