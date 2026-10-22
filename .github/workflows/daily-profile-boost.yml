@@ -2,25 +2,31 @@ name: Daily Multi-Platform Profile Rank Booster
 
 on:
   schedule:
-    # Morning window: Trigger at 8:45 AM IST (3:15 AM UTC)
+    # 1. MORNING SHIFT (India Golden Window):
+    # Triggers at 8:45 AM IST (3:15 AM UTC) -> Runs Naukri, Instahyre, Cutshort (Run 1/2)
     - cron: '15 3 * * *'
-    # Afternoon window: Trigger at 2:15 PM IST (8:45 AM UTC)
+
+    # 2. AFTERNOON SHIFT (Post-Lunch & India/Wellfound Overlap):
+    # Triggers at 2:15 PM IST (8:45 AM UTC) -> Runs Naukri, Instahyre, Cutshort (Run 2/2) + Wellfound (Run 1/2)
     - cron: '45 8 * * *'
+
+    # 3. EVENING SHIFT (US & Europe Founder Morning Window):
+    # Triggers at 6:45 PM IST (1:15 PM UTC) -> Runs Wellfound (Run 2/2)
+    - cron: '15 13 * * *'
 
   # Manual on-demand trigger (from GitHub Mobile App or Web)
   workflow_dispatch:
     inputs:
-      platform:
-        description: 'Target Platform to refresh'
+      mode:
+        description: 'Execution mode'
         required: true
         default: 'all'
         type: choice
         options:
           - all
-          - naukri
-          - instahyre
-          - wellfound
-          - cutshort
+          - morning
+          - afternoon
+          - evening
 
 permissions:
   contents: read
@@ -28,7 +34,7 @@ permissions:
 jobs:
   boost-profiles:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
 
     steps:
       - name: Checkout Repository
@@ -54,16 +60,32 @@ jobs:
           echo "${{ secrets.WELLFOUND_AUTH_STATE }}" | base64 -d > auth/wellfound-state.json 2>/dev/null || true
           echo "${{ secrets.CUTSHORT_AUTH_STATE }}" | base64 -d > auth/cutshort-state.json 2>/dev/null || true
 
-      - name: Jitter Delay (Anti-bot natural window 0-25 mins)
-        if: github.event_name == 'schedule'
+      - name: Determine Mode & Natural Jitter Delay (Anti-Bot Window)
         run: |
-          # Random sleep between 60s and 1500s (0 to 25 mins)
-          DELAY=$(( (RANDOM % 1440) + 60 ))
-          echo "Simulating natural human start. Sleeping for ${DELAY} seconds..."
-          sleep ${DELAY}
+          # If manual dispatch, use input; else determine from UTC hour
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            SELECTED_MODE="${{ github.event.inputs.mode }}"
+            echo "TARGET_MODE=${SELECTED_MODE}" >> $GITHUB_ENV
+            echo "Manual trigger mode: ${SELECTED_MODE} (No jitter delay)"
+          else
+            # Automated cron - determine shift
+            HOUR=$(date -u +%H)
+            if [ "$HOUR" -ge 2 ] && [ "$HOUR" -le 5 ]; then
+              echo "TARGET_MODE=morning" >> $GITHUB_ENV
+            elif [ "$HOUR" -ge 7 ] && [ "$HOUR" -le 10 ]; then
+              echo "TARGET_MODE=afternoon" >> $GITHUB_ENV
+            else
+              echo "TARGET_MODE=evening" >> $GITHUB_ENV
+            fi
+            
+            # Natural human jitter delay: 60s to 900s (1 to 15 minutes)
+            DELAY=$(( (RANDOM % 840) + 60 ))
+            echo "Simulating natural human timing. Sleeping for ${DELAY} seconds..."
+            sleep ${DELAY}
+          fi
 
-      - name: Run Multi-Platform Rank Booster
-        run: npx tsx scripts/update-all.ts
+      - name: Run Targeted Multi-Platform Rank Booster
+        run: npx tsx scripts/update-all.ts "${{ env.TARGET_MODE }}"
         env:
           HEADLESS: 'true'
 
@@ -72,5 +94,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: profile-boost-screenshots
-          path: artifacts/
-          retention-days: 7
+          path: artifacts/*.png
+          if-no-files-found: ignore
