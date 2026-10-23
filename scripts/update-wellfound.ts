@@ -1,4 +1,4 @@
-import { firefox, type Page } from 'playwright';
+import { firefox } from 'playwright';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
@@ -11,7 +11,7 @@ function log(msg: string) {
 }
 
 export async function updateWellfound(): Promise<boolean> {
-  log('Starting Wellfound profile activity boost...');
+  log('Starting Wellfound profile activity & Full Stack boost...');
   await fs.mkdir(ARTIFACT_DIR, { recursive: true });
 
   const browser = await firefox.launch({
@@ -35,7 +35,6 @@ export async function updateWellfound(): Promise<boolean> {
     // Strict assertion: candidate dashboard indicators
     const isCandidateLoggedIn = await page.evaluate(() => {
       const text = document.body.innerText;
-      // When logged in as candidate, navigation contains 'Profile', 'Applied', 'Messages', 'Ready to interview'
       const hasCandidateNav = text.includes('Profile') && text.includes('Applied') && text.includes('Messages');
       const hasLogInBtn = Array.from(document.querySelectorAll('a, button')).some(el => el.innerText && el.innerText.trim() === 'Log in');
       return hasCandidateNav && !hasLogInBtn;
@@ -46,6 +45,14 @@ export async function updateWellfound(): Promise<boolean> {
     }
 
     log(`Loaded Wellfound URL: ${page.url()}`);
+
+    // If verification modal is present, dismiss/confirm with Continue
+    const continueBtn = page.locator('button:has-text("Continue")').first();
+    if (await continueBtn.isVisible().catch(() => false)) {
+      log('Dismissing verification modal via Continue');
+      await continueBtn.click().catch(() => undefined);
+      await page.waitForTimeout(2000);
+    }
 
     // Touch profile / preferences to register activity
     await page.evaluate(() => {

@@ -7,6 +7,8 @@ const RESUME_PATH = path.resolve('resumes/Pratik_Patidar_Resume.pdf');
 const AUTH_STATE_PATH = path.resolve(process.env.AUTH_STATE_PATH ?? 'auth/naukri-state.json');
 const ARTIFACT_DIR = path.resolve('artifacts');
 
+export const CANONICAL_HEADLINE = "Full Stack Developer | MERN Stack | React.js | Node.js | TypeScript | 1.5+ Years Exp";
+
 function log(msg: string) {
   console.log(`[Naukri-Engine] ${new Date().toISOString()} ${msg}`);
 }
@@ -26,7 +28,7 @@ async function findResumeInput(page: Page) {
 }
 
 export async function updateNaukri(): Promise<boolean> {
-  log('Starting daily Naukri rank boost...');
+  log('Starting daily Naukri rank boost (Full Stack Developer Profile)...');
   await fs.mkdir(ARTIFACT_DIR, { recursive: true });
 
   const browser = await firefox.launch({
@@ -53,10 +55,10 @@ export async function updateNaukri(): Promise<boolean> {
 
     log(`Loaded profile URL: ${page.url()}`);
 
-    // 1. Upload Resume
+    // 1. Upload MERN Full Stack Resume
     const fileInput = await findResumeInput(page);
     await fileInput.setInputFiles(RESUME_PATH);
-    log('Resume file uploaded successfully');
+    log('MERN Full Stack Resume file uploaded successfully');
 
     // 2. Click Save/Update if present
     const saveButtons = [
@@ -73,9 +75,29 @@ export async function updateNaukri(): Promise<boolean> {
       }
     }
 
+    // 3. Update Headline to Full Stack Developer if editable
+    try {
+      const editHeadlineBtn = page.locator('.resumeHeadline .edit, .resumeHeadline span.icon, span:has-text("editOneTheme")').first();
+      if (await editHeadlineBtn.isVisible().catch(() => false)) {
+        await editHeadlineBtn.click().catch(() => undefined);
+        await page.waitForTimeout(1500);
+        const headlineTextarea = page.locator('textarea#resumeHeadlineTxt, textarea.resumeHeadlineTxt').first();
+        if (await headlineTextarea.isVisible().catch(() => false)) {
+          await headlineTextarea.fill(CANONICAL_HEADLINE);
+          const saveHeadlineBtn = page.locator('button:has-text("Save")').first();
+          if (await saveHeadlineBtn.isVisible().catch(() => false)) {
+            await saveHeadlineBtn.click().catch(() => undefined);
+            log(`Updated Naukri Headline to: "${CANONICAL_HEADLINE}"`);
+          }
+        }
+      }
+    } catch (e: any) {
+      log(`Headline update skipped/optional: ${e.message}`);
+    }
+
     await page.waitForTimeout(4000);
     await page.screenshot({ path: path.join(ARTIFACT_DIR, 'naukri-success.png') });
-    log('✅ Naukri Profile Ranked & Active Today timestamp updated!');
+    log('✅ Naukri Profile Ranked as Full Stack Developer & Active Today timestamp updated!');
     return true;
   } catch (err) {
     log(`Naukri update error: ${err}`);
