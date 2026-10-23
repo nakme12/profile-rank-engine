@@ -76,6 +76,9 @@ async function main() {
   const summaryLines = Object.entries(results).map(([k, v]) => `• *${k}*: ${v}`).join('\n');
   const telegramMsg = `🚀 *Profile Rank Booster Status*\n*Shift*: \`${targetMode.toUpperCase()}\`\n*Time*: \`${new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' })} IST\`\n\n${summaryLines}`;
   await sendTelegramMessage(telegramMsg);
+
+  console.log('✅ Rank booster run completed successfully. Exiting.');
+  process.exit(0);
 }
 
 main().catch(err => {
