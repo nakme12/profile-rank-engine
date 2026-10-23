@@ -97,6 +97,8 @@ jobs:
         run: npx tsx scripts/update-all.ts "${{ env.TARGET_MODE }}"
         env:
           HEADLESS: 'true'
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
       - name: Upload Debug Artifacts (on failure or success)
         if: always()

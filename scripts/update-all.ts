@@ -3,6 +3,7 @@ import { updateWellfound } from './update-wellfound';
 import { updateInstahyre } from './update-instahyre';
 import { updateCutshort } from './update-cutshort';
 import { updateHirist } from './update-hirist';
+import { sendTelegramMessage } from './notify-telegram';
 
 // Mode from CLI argument or environment: 'morning' | 'afternoon' | 'evening' | 'all'
 const targetMode = process.argv[2] ?? process.env.BOOST_MODE ?? 'all';
@@ -70,6 +71,11 @@ async function main() {
   console.log(`📊 FINAL SUMMARY OF RANK UPDATE (${targetMode.toUpperCase()}):`);
   console.log(JSON.stringify(results, null, 2));
   console.log(`======================================================\n`);
+
+  // Send Telegram Notification
+  const summaryLines = Object.entries(results).map(([k, v]) => `• *${k}*: ${v}`).join('\n');
+  const telegramMsg = `🚀 *Profile Rank Booster Status*\n*Shift*: \`${targetMode.toUpperCase()}\`\n*Time*: \`${new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' })} IST\`\n\n${summaryLines}`;
+  await sendTelegramMessage(telegramMsg);
 }
 
 main().catch(err => {
