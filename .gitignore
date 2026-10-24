@@ -1,7 +1,18 @@
+# Dependencies
 node_modules/
+package-lock.json
+
+# Local Browser & Session Cache
 playwright/.auth/
 auth/*.json
-artifacts/
-*.log
+
+# Artifacts & Local Run Logs (auto-generated)
+artifacts/*.png
+artifacts/*.log
+artifacts/scheduler-state.json
+artifacts/morning-run/
+screenshots/
+
+# System Files
 .DS_Store
 Thumbs.db
