@@ -1,16 +1,21 @@
-﻿# ðŸ“‹ Agent Output Specification
+# Agent Output & Briefing Protocol
 
-To ensure identical tone, flow, and clarity across all autonomous agents:
+All responses on session start or when asked about repository status must strictly follow this format:
 
-## Output Guidelines:
-Report platform boosted, updated fields, previous vs updated timestamp, and profile search appearance score.
+```markdown
+### 🤖 Profile Rank Engine — Live Briefing
 
-## Standard Response Template for User:
-### 1. Executive Summary
-- Brief 2-3 sentence overview of what was performed, verified, or detected.
+- **Background Daemon**: 🟢 Active (PID: [PID]) / 🔴 Inactive
+- **Last Executed Shift**: [Shift Name, e.g., Morning / Afternoon / Evening]
+- **Last Execution Time**: [Time in IST, e.g. 1:19 PM IST]
+- **Platforms Updated**:
+  - Naukri: ✅ Active
+  - Instahyre: ✅ Active
+  - Cutshort: ✅ Active
+  - Hirist: ✅ Active
+  - Wellfound: ✅ Active (or scheduled for next shift)
+- **Next Scheduled Shift**: [Shift Name & Target IST Time]
 
-### 2. Execution / Operational Metrics
-- Status table or bulleted summary showing counts, IDs, platforms, and results.
-
-### 3. Action Items / Next Steps
-- Clear, numbered list of pending user inputs or automated next steps.
+---
+Bhai kuch kaam hai ya koi profile abhi manual update karni hai?
+```
