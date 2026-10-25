@@ -34,7 +34,7 @@ permissions:
 jobs:
   boost-profiles:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 15
 
     steps:
       - name: Checkout Repository

@@ -28,6 +28,7 @@ export async function sendTelegramMessage(text: string): Promise<boolean> {
         }
       },
       (res) => {
+        res.resume(); // consume stream to allow socket cleanup
         if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
           console.log('[Telegram] Notification message sent successfully.');
           resolve(true);
@@ -37,6 +38,12 @@ export async function sendTelegramMessage(text: string): Promise<boolean> {
         }
       }
     );
+
+    req.setTimeout(10000, () => {
+      console.error('[Telegram] Request timed out after 10s.');
+      req.destroy();
+      resolve(false);
+    });
 
     req.on('error', (err) => {
       console.error('[Telegram] Network error:', err.message);
