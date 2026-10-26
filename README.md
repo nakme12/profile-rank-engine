@@ -33,6 +33,7 @@ profile-rank-engine/
 │   ├── update-foundit.ts       # Foundit (ex-Monster) rank updater
 │   ├── update-naukri.ts        # Naukri rank updater
 │   ├── update-instahyre.ts     # Instahyre rank updater
+│   ├── update-profile-pic.ts   # Profile photo updater (Naukri / Wellfound / Instahyre)
 │   └── update-wellfound.ts     # Wellfound rank updater
 ├── run_daemon_silent.vbs       # Silent background launcher for local daemon
 └── package.json
@@ -48,6 +49,10 @@ npx tsx scripts/capture-session.ts foundit --cdp
 
 # Health check: is every saved session still valid?
 npx tsx scripts/verify-sessions.ts
+
+# Update profile photo from assets/profile.jpeg (or PROFILE_PHOTO=/path/to/pic.jpg)
+npx tsx scripts/update-profile-pic.ts all
+npx tsx scripts/update-profile-pic.ts naukri
 
 # Run on-demand update for all platforms
 npm run update:all
