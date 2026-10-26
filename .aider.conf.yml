@@ -1,0 +1,12 @@
+# Aider Config for profile-rank-engine
+model: gemini/gemini-2.5-flash
+yes-always: true
+auto-commits: true
+dark-mode: true
+chat-language: Hinglish
+
+read:
+  - AGENTS.md
+  - REPO_RULES.md
+  - AGENTIC_TEMPLATE.md
+  - README.md
