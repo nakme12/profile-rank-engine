@@ -33,7 +33,7 @@ profile-rank-engine/
 │   ├── update-foundit.ts       # Foundit (ex-Monster) rank updater
 │   ├── update-naukri.ts        # Naukri rank updater
 │   ├── update-instahyre.ts     # Instahyre rank updater
-│   ├── update-profile-pic.ts   # Profile photo updater (Naukri / Wellfound / Instahyre)
+│   ├── update-profile-pic.ts   # Profile photo updater (Naukri / Wellfound / Instahyre / Foundit)
 │   └── update-wellfound.ts     # Wellfound rank updater
 ├── run_daemon_silent.vbs       # Silent background launcher for local daemon
 └── package.json
@@ -65,3 +65,14 @@ npx tsx scripts/update-all.ts evening
 # Start background daemon
 wscript.exe run_daemon_silent.vbs
 ```
+
+## 🔬 Reverse-engineering with REA
+
+Endpoints that the web UI never exposes are recovered by static analysis of the
+portal's shipped JS bundles with [REA](https://github.com/morluto/rea) (`C:\mcp\rea`).
+
+Findings + evidence IDs: [`docs/REVERSE-ENGINEERING.md`](docs/REVERSE-ENGINEERING.md)
+
+> Example: Foundit has no photo control in the UI, but the bundle reveals
+> `POST /falcon/api/users/v1/me/upload-avatar` with a bearer token derived from the
+> `MSSOAT` cookie — that is what makes Foundit photo upload work.

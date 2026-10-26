@@ -9,6 +9,8 @@ auth/*.json
 # Artifacts & Local Run Logs (auto-generated)
 artifacts/*.png
 artifacts/*.log
+artifacts/*.cjs
+artifacts/*.json
 artifacts/scheduler-state.json
 artifacts/morning-run/
 screenshots/
