@@ -1,6 +1,7 @@
 import { firefox, type Page } from 'playwright';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { refreshState } from './session-utils';
 
 const PROFILE_URL = 'https://www.naukri.com/mnjuser/profile';
 const RESUME_PATH = path.resolve('resumes/Pratik_Patidar_Resume.pdf');
@@ -94,6 +95,8 @@ export async function updateNaukri(): Promise<boolean> {
     } catch (e: any) {
       log(`Headline update skipped/optional: ${e.message}`);
     }
+
+    await refreshState(context, AUTH_STATE_PATH, log);
 
     await page.waitForTimeout(4000);
     await page.screenshot({ path: path.join(ARTIFACT_DIR, 'naukri-success.png') });

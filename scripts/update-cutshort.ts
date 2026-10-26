@@ -1,6 +1,7 @@
 import { firefox } from 'playwright';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { refreshState } from './session-utils';
 
 const CUTSHORT_DASHBOARD_URL = 'https://cutshort.io/profile/candidate-dashboard';
 const AUTH_STATE_PATH = path.resolve(process.env.CUTSHORT_AUTH_STATE_PATH ?? 'auth/cutshort-state.json');
@@ -50,6 +51,8 @@ export async function updateCutshort(): Promise<boolean> {
       window.scrollBy({ top: 350, behavior: 'smooth' });
     });
     await page.waitForTimeout(3000);
+
+    await refreshState(context, AUTH_STATE_PATH, log);
 
     await page.screenshot({ path: path.join(ARTIFACT_DIR, 'cutshort-success.png') });
     log('✅ Cutshort Profile Activity & Active Candidate status confirmed!');

@@ -1,11 +1,11 @@
 # Profile Rank Booster Engine (Autonomous Multi-Platform)
 
-Autonomous cloud & local multi-platform rank booster for **Naukri**, **Instahyre**, **Cutshort**, **Hirist**, and **Wellfound**.
+Autonomous cloud & local multi-platform rank booster for **Naukri**, **Instahyre**, **Cutshort**, **Hirist**, **Foundit**, and **Wellfound**.
 
 ## 🚀 Key Highlights
 - **Shift Schedule**:
-  - **Morning** (08:45 AM IST): Naukri, Instahyre, Cutshort, Hirist
-  - **Afternoon** (02:15 PM IST): Naukri, Instahyre, Cutshort, Hirist + Wellfound
+  - **Morning** (08:45 AM IST): Naukri, Instahyre, Cutshort, Hirist, Foundit
+  - **Afternoon** (02:15 PM IST): Naukri, Instahyre, Cutshort, Hirist, Foundit + Wellfound
   - **Evening** (06:45 PM IST): Wellfound (US timezone peak)
 - **Offline Catch-Up Sync**: Automatically detects and catches up any missed shift if the local system was offline.
 - **Telegram Notification**: Real-time markdown notification sent to Telegram after each shift run.
@@ -22,11 +22,15 @@ profile-rank-engine/
 │   └── Pratik_Patidar_Resume.pdf
 ├── scripts/                    # Platform automation engines
 │   ├── local-cron-daemon.cjs   # Daemon with offline catch-up sync
+│   ├── capture-session.ts      # Auto-detect login & save session (CDP or fresh browser)
+│   ├── verify-sessions.ts      # Session health check across all platforms
+│   ├── session-utils.ts        # Shared platform config & session helpers
 │   ├── notify-telegram.ts      # Telegram notification service
 │   ├── setup-session.ts        # Interactive login & session cookie saver
 │   ├── update-all.ts           # Orchestrator for all platforms
 │   ├── update-cutshort.ts      # Cutshort rank updater
 │   ├── update-hirist.ts        # Hirist rank updater
+│   ├── update-foundit.ts       # Foundit (ex-Monster) rank updater
 │   ├── update-naukri.ts        # Naukri rank updater
 │   ├── update-instahyre.ts     # Instahyre rank updater
 │   └── update-wellfound.ts     # Wellfound rank updater
@@ -36,6 +40,15 @@ profile-rank-engine/
 
 ## 🛠️ Commands
 ```bash
+# Save a fresh login session (run when a portal session expires)
+npx tsx scripts/setup-session.ts foundit
+
+# Auto-detect login & save session without pressing ENTER (uses your running Brave on :9222)
+npx tsx scripts/capture-session.ts foundit --cdp
+
+# Health check: is every saved session still valid?
+npx tsx scripts/verify-sessions.ts
+
 # Run on-demand update for all platforms
 npm run update:all
 

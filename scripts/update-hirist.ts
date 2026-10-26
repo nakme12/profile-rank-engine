@@ -1,6 +1,7 @@
 import { firefox } from 'playwright';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { refreshState } from './session-utils';
 
 const HIRIST_FEED_URL = 'https://www.hirist.tech/jobfeed';
 const AUTH_STATE_PATH = path.resolve(process.env.HIRIST_AUTH_STATE_PATH ?? 'auth/hirist-state.json');
@@ -49,6 +50,8 @@ export async function updateHirist(): Promise<boolean> {
       window.scrollBy({ top: 300, behavior: 'smooth' });
     });
     await page.waitForTimeout(2500);
+
+    await refreshState(context, AUTH_STATE_PATH, log);
 
     await page.screenshot({ path: path.join(ARTIFACT_DIR, 'hirist-success.png') });
     log('✅ Hirist Candidate Activity & Active Today status confirmed!');

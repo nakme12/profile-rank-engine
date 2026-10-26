@@ -3,10 +3,16 @@ import { updateWellfound } from './update-wellfound';
 import { updateInstahyre } from './update-instahyre';
 import { updateCutshort } from './update-cutshort';
 import { updateHirist } from './update-hirist';
+import { updateFoundit } from './update-foundit';
 import { sendTelegramMessage } from './notify-telegram';
+import { PLATFORMS, stateExists, type PlatformKey } from './session-utils';
 
 // Mode from CLI argument or environment: 'morning' | 'afternoon' | 'evening' | 'all'
 const targetMode = process.argv[2] ?? process.env.BOOST_MODE ?? 'all';
+
+function log(msg: string) {
+  console.log(`[Orchestrator] ${new Date().toISOString()} ${msg}`);
+}
 
 async function main() {
   console.log(`\n======================================================`);
@@ -17,54 +23,45 @@ async function main() {
 
   const results: Record<string, string> = {};
 
-  // 1. NAUKRI (2 times: Morning ~9 AM & Afternoon ~2:30 PM)
-  if (['all', 'morning', 'afternoon'].includes(targetMode)) {
-    try {
-      await updateNaukri();
-      results['Naukri'] = '✅ Success (Resume & headline refreshed)';
-    } catch (e: any) {
-      results['Naukri'] = `❌ Failed: ${e.message}`;
+  // Runs one platform, but skips it cleanly when no saved session exists
+  // (e.g. a platform that has not been logged in yet) instead of reporting a hard failure.
+  const run = async (key: PlatformKey, label: string, successMsg: string, fn: () => Promise<unknown>) => {
+    if (!(await stateExists(PLATFORMS[key]))) {
+      log(`${label}: no saved session — skipping`);
+      results[label] = `⏭️ Skipped (no session: auth/${key}-state.json)`;
+      return;
     }
+    try {
+      await fn();
+      results[label] = successMsg;
+    } catch (e: any) {
+      results[label] = `❌ Failed: ${e.message}`;
+    }
+  };
+
+  const indiaShift = ['all', 'morning', 'afternoon'].includes(targetMode);
+  const wellfoundShift = ['all', 'afternoon', 'evening'].includes(targetMode);
+
+  if (indiaShift) {
+    // 1. NAUKRI (2 times: Morning ~9 AM & Afternoon ~2:30 PM)
+    await run('naukri', 'Naukri', '✅ Success (Resume & headline refreshed)', updateNaukri);
+
+    // 2. INSTAHYRE (2 times: Morning ~9 AM & Afternoon ~2:30 PM)
+    await run('instahyre', 'Instahyre', '✅ Success (Candidate status refreshed)', updateInstahyre);
+
+    // 3. CUTSHORT (2 times: Morning ~9 AM & Afternoon ~2:30 PM)
+    await run('cutshort', 'Cutshort', '✅ Success (Active Candidate status refreshed)', updateCutshort);
+
+    // 4. HIRIST (2 times: Morning ~9 AM & Afternoon ~2:30 PM)
+    await run('hirist', 'Hirist', '✅ Success (Jobfeed activity refreshed)', updateHirist);
+
+    // 5. FOUNDIT (2 times: Morning ~9 AM & Afternoon ~2:30 PM)
+    await run('foundit', 'Foundit', '✅ Success (Resume & profile refreshed)', updateFoundit);
   }
 
-  // 2. INSTAHYRE (2 times: Morning ~9 AM & Afternoon ~2:30 PM)
-  if (['all', 'morning', 'afternoon'].includes(targetMode)) {
-    try {
-      await updateInstahyre();
-      results['Instahyre'] = '✅ Success (Candidate status refreshed)';
-    } catch (e: any) {
-      results['Instahyre'] = `❌ Failed: ${e.message}`;
-    }
-  }
-
-  // 3. CUTSHORT (2 times: Morning ~9 AM & Afternoon ~2:30 PM)
-  if (['all', 'morning', 'afternoon'].includes(targetMode)) {
-    try {
-      await updateCutshort();
-      results['Cutshort'] = '✅ Success (Active Candidate status refreshed)';
-    } catch (e: any) {
-      results['Cutshort'] = `❌ Failed: ${e.message}`;
-    }
-  }
-
-  // 4. HIRIST (2 times: Morning ~9 AM & Afternoon ~2:30 PM)
-  if (['all', 'morning', 'afternoon'].includes(targetMode)) {
-    try {
-      await updateHirist();
-      results['Hirist'] = '✅ Success (Jobfeed activity refreshed)';
-    } catch (e: any) {
-      results['Hirist'] = `❌ Failed: ${e.message}`;
-    }
-  }
-
-  // 5. WELLFOUND (2 times: Afternoon ~2:30 PM & Evening ~7:00 PM for US/Remote founders)
-  if (['all', 'afternoon', 'evening'].includes(targetMode)) {
-    try {
-      await updateWellfound();
-      results['Wellfound'] = '✅ Success (Activity & preferences refreshed)';
-    } catch (e: any) {
-      results['Wellfound'] = `❌ Failed: ${e.message}`;
-    }
+  // 6. WELLFOUND (2 times: Afternoon ~2:30 PM & Evening ~7:00 PM for US/Remote founders)
+  if (wellfoundShift) {
+    await run('wellfound', 'Wellfound', '✅ Success (Activity & preferences refreshed)', updateWellfound);
   }
 
   console.log(`\n======================================================`);

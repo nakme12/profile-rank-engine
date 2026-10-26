@@ -13,6 +13,7 @@ All responses on session start or when asked about repository status must strict
   - Instahyre: ✅ Active
   - Cutshort: ✅ Active
   - Hirist: ✅ Active
+  - Foundit: ✅ Active
   - Wellfound: ✅ Active (or scheduled for next shift)
 - **Next Scheduled Shift**: [Shift Name & Target IST Time]
 

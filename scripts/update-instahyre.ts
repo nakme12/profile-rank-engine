@@ -1,6 +1,7 @@
 import { firefox } from 'playwright';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { refreshState } from './session-utils';
 
 const INSTAHYRE_URL = 'https://www.instahyre.com/candidate/opportunities/';
 const AUTH_STATE_PATH = path.resolve(process.env.INSTA_AUTH_STATE_PATH ?? 'auth/instahyre-state.json');
@@ -43,6 +44,8 @@ export async function updateInstahyre(): Promise<boolean> {
       await showResults.click().catch(() => undefined);
       log('Triggered Instahyre active search ping');
     }
+
+    await refreshState(context, AUTH_STATE_PATH, log);
 
     await page.waitForTimeout(3000);
     await page.screenshot({ path: path.join(ARTIFACT_DIR, 'instahyre-success.png') });

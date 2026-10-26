@@ -68,6 +68,7 @@ jobs:
           echo "${{ secrets.WELLFOUND_AUTH_STATE }}" | base64 -d > auth/wellfound-state.json 2>/dev/null || true
           echo "${{ secrets.CUTSHORT_AUTH_STATE }}" | base64 -d > auth/cutshort-state.json 2>/dev/null || true
           echo "${{ secrets.HIRIST_AUTH_STATE }}" | base64 -d > auth/hirist-state.json 2>/dev/null || true
+          echo "${{ secrets.FOUNDIT_AUTH_STATE }}" | base64 -d > auth/foundit-state.json 2>/dev/null || true
 
       - name: Determine Mode & Natural Jitter Delay (Anti-Bot Window)
         run: |

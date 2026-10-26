@@ -1,6 +1,7 @@
 import { firefox } from 'playwright';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { refreshState } from './session-utils';
 
 const WELLFOUND_PROFILE_URL = 'https://wellfound.com/jobs';
 const AUTH_STATE_PATH = path.resolve(process.env.WF_AUTH_STATE_PATH ?? 'auth/wellfound-state.json');
@@ -59,6 +60,8 @@ export async function updateWellfound(): Promise<boolean> {
       window.scrollBy(0, 300);
     });
     await page.waitForTimeout(2000);
+
+    await refreshState(context, AUTH_STATE_PATH, log);
 
     await page.screenshot({ path: path.join(ARTIFACT_DIR, 'wellfound-success.png') });
     log('✅ Wellfound activity timestamp updated to Active Today!');

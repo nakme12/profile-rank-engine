@@ -9,6 +9,9 @@ const platform = process.argv[2] || 'naukri';
 const PLATFORM_URLS: Record<string, string> = {
   naukri: 'https://www.naukri.com/nlogin/login',
   instahyre: 'https://www.instahyre.com/login/',
+  cutshort: 'https://cutshort.io/login',
+  hirist: 'https://www.hirist.tech/login',
+  foundit: 'https://www.foundit.in/login',
   wellfound: 'https://wellfound.com/login',
   linkedin: 'https://www.linkedin.com/login'
 };
@@ -16,7 +19,7 @@ const PLATFORM_URLS: Record<string, string> = {
 async function main() {
   const url = PLATFORM_URLS[platform.toLowerCase()];
   if (!url) {
-    console.error(`Unknown platform: ${platform}. Use: naukri | instahyre | wellfound`);
+    console.error(`Unknown platform: ${platform}. Use: ${Object.keys(PLATFORM_URLS).join(' | ')}`);
     process.exit(1);
   }
 
