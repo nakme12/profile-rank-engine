@@ -73,6 +73,15 @@ export const PLATFORMS: Record<PlatformKey, PlatformConfig> = {
     authStateFile: 'auth/wellfound-state.json',
     loggedInPatterns: ['Applied', 'Messages', 'Profile'],
     loggedInUrlPatterns: ['/jobs']
+  },
+  linkedin: {
+    key: 'linkedin',
+    label: 'LinkedIn',
+    loginUrl: 'https://www.linkedin.com/login',
+    profileUrl: 'https://www.linkedin.com/me/',
+    authStateFile: 'auth/linkedin-state.json',
+    loggedInPatterns: ['dashboard', 'My Network', 'Jobs'],
+    loggedInUrlPatterns: ['/feed', '/in/']
   }
 };
 
