@@ -11,7 +11,7 @@ const PROFILE_URLS = [
   'https://www.foundit.in/seeker/home'
 ];
 
-const RESUME_PATH = path.resolve(process.env.FOUNDIT_RESUME_PATH ?? 'resumes/Pratik_Patidar_Resume.pdf');
+const RESUME_PATH = path.resolve(process.env.FOUNDIT_RESUME_PATH ?? 'resumes/Pratik_Patidar_Resume_Full_Stack_Developer.pdf');
 const AUTH_STATE_PATH = path.resolve(process.env.FOUNDIT_AUTH_STATE_PATH ?? 'auth/foundit-state.json');
 const ARTIFACT_DIR = path.resolve('artifacts');
 

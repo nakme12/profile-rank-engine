@@ -19,7 +19,7 @@ profile-rank-engine/
 ├── .agents/                    # Agent guidelines & prompt rules
 ├── auth/                       # Local session cookies & auth state (git-ignored)
 ├── resumes/                    # Active resume files used for re-upload boost
-│   └── Pratik_Patidar_Resume.pdf
+│   └── Pratik_Patidar_Resume_Full_Stack_Developer.pdf
 ├── scripts/                    # Platform automation engines
 │   ├── local-cron-daemon.cjs   # Daemon with offline catch-up sync
 │   ├── capture-session.ts      # Auto-detect login & save session (CDP or fresh browser)
