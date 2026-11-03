@@ -4,6 +4,7 @@ import { updateInstahyre } from './update-instahyre';
 import { updateCutshort } from './update-cutshort';
 import { updateHirist } from './update-hirist';
 import { updateFoundit } from './update-foundit';
+import { updateShine } from './update-shine';
 import { sendTelegramMessage } from './notify-telegram';
 import { PLATFORMS, stateExists, type PlatformKey } from './session-utils';
 
@@ -57,6 +58,9 @@ async function main() {
 
     // 5. FOUNDIT (2 times: Morning ~9 AM & Afternoon ~2:30 PM)
     await run('foundit', 'Foundit', '✅ Success (Resume & profile refreshed)', updateFoundit);
+
+    // 6. SHINE (2 times: Morning ~9 AM & Afternoon ~2:30 PM)
+    await run('shine', 'Shine', '✅ Success (Resume & profile refreshed)', updateShine);
   }
 
   // 6. WELLFOUND (2 times: Afternoon ~2:30 PM & Evening ~7:00 PM for US/Remote founders)

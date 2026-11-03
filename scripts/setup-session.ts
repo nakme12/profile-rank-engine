@@ -13,7 +13,8 @@ const PLATFORM_URLS: Record<string, string> = {
   hirist: 'https://www.hirist.tech/login',
   foundit: 'https://www.foundit.in/login',
   wellfound: 'https://wellfound.com/login',
-  linkedin: 'https://www.linkedin.com/login'
+  linkedin: 'https://www.linkedin.com/login',
+  shine: 'https://www.shine.com/myshine/login/'
 };
 
 async function main() {

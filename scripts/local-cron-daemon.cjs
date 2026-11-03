@@ -63,16 +63,28 @@ function checkMissedShifts() {
 
 function triggerShift(shiftName, executionKey) {
   try {
-    log(`[DISPATCH] Triggering GitHub Actions cloud runner for shift: ${shiftName}...`);
-    execSync(`gh workflow run 391763205 -f mode=${shiftName}`, {
+    log(`[DISPATCH] Running local multi-platform rank boost for shift: ${shiftName.toUpperCase()}...`);
+    execSync(`npx tsx scripts/update-all.ts ${shiftName}`, {
       cwd: path.join(__dirname, '..'),
-      stdio: 'pipe'
+      stdio: 'inherit',
+      timeout: 15 * 60 * 1000 // 15 min max
     });
-    log(`[DISPATCH] GitHub Actions workflow dispatched successfully for ${shiftName}.`);
+    log(`[DISPATCH] Local rank boost completed successfully for ${shiftName}.`);
     state.lastExecuted[executionKey] = new Date().toISOString();
     saveState(state);
+
+    // Also trigger GitHub Actions as cloud mirror (non-blocking)
+    try {
+      execSync(`gh workflow run 391763205 -f mode=${shiftName}`, {
+        cwd: path.join(__dirname, '..'),
+        stdio: 'pipe'
+      });
+      log(`[DISPATCH] GitHub Actions cloud runner dispatched for backup.`);
+    } catch (ghErr) {
+      log(`[DISPATCH-NOTE] GitHub cloud dispatch skipped (offline/perms): ${ghErr?.message || ghErr}`);
+    }
   } catch (err) {
-    log(`[DISPATCH-OFFLINE] Network/GitHub unreachable or offline: ${err?.message || err}. Queued for retry when online.`);
+    log(`[DISPATCH-ERROR] Error executing shift ${shiftName}: ${err?.message || err}.`);
   }
 }
 

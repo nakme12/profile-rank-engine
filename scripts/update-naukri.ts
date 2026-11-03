@@ -14,7 +14,7 @@ function log(msg: string) {
   console.log(`[Naukri-Engine] ${new Date().toISOString()} ${msg}`);
 }
 
-async function findResumeInput(page: Page, timeoutMs = 30000) {
+async function findResumeInput(page: Page, timeoutMs = 35000) {
   const selectors = [
     '#attachCV',
     'input[type="file"]',
@@ -23,11 +23,43 @@ async function findResumeInput(page: Page, timeoutMs = 30000) {
   ];
   
   const start = Date.now();
+  let reloadedOnce = false;
+
   while (Date.now() - start < timeoutMs) {
+    // Dismiss any modal overlays or chatbot popups
+    const dismissButtons = [
+      '.crossIcon',
+      'button:has-text("Skip")',
+      'button:has-text("Later")',
+      'button:has-text("Remind me later")',
+      'span:has-text("✕")',
+      'div[class*="close"]'
+    ];
+    for (const sel of dismissButtons) {
+      const btn = page.locator(sel).first();
+      if (await btn.isVisible().catch(() => false)) {
+        await btn.click().catch(() => undefined);
+      }
+    }
+
     for (const s of selectors) {
       const loc = page.locator(s).first();
       if ((await loc.count().catch(() => 0)) > 0) return loc;
     }
+
+    // If skeleton screen persists after 10s, reload page once to unstick React hydration
+    if (!reloadedOnce && Date.now() - start > 10000) {
+      const isSkeleton = await page.evaluate(() => {
+        return !!document.querySelector('[class*="skeleton"], .loader, .shimmer');
+      }).catch(() => false);
+      if (isSkeleton) {
+        log('Naukri skeleton/shimmer loader detected — reloading page to unstick hydration...');
+        await page.reload({ waitUntil: 'domcontentloaded' }).catch(() => undefined);
+        await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => undefined);
+        reloadedOnce = true;
+      }
+    }
+
     // Natural human scrolling to trigger lazy-loaded sections
     await page.evaluate(() => window.scrollBy(0, 300)).catch(() => undefined);
     await page.waitForTimeout(1000);
@@ -48,7 +80,8 @@ export async function updateNaukri(): Promise<boolean> {
     storageState: AUTH_STATE_PATH,
     viewport: { width: 1440, height: 1000 },
     locale: 'en-IN',
-    timezoneId: 'Asia/Kolkata'
+    timezoneId: 'Asia/Kolkata',
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:132.0) Gecko/20100101 Firefox/132.0'
   });
 
   const page = await context.newPage();

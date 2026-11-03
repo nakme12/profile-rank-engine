@@ -8,11 +8,13 @@
     "setup:instahyre": "tsx scripts/setup-session.ts instahyre",
     "setup:wellfound": "tsx scripts/setup-session.ts wellfound",
     "setup:foundit": "tsx scripts/setup-session.ts foundit",
+    "setup:shine": "tsx scripts/setup-session.ts shine",
     "session:capture": "tsx scripts/capture-session.ts",
     "session:verify": "tsx scripts/verify-sessions.ts",
     "update:all": "tsx scripts/update-all.ts",
     "update:naukri": "tsx scripts/update-naukri.ts",
-    "update:foundit": "tsx scripts/update-foundit.ts"
+    "update:foundit": "tsx scripts/update-foundit.ts",
+    "update:shine": "tsx scripts/update-shine.ts"
   },
   "dependencies": {
     "playwright": "^1.49.0",
