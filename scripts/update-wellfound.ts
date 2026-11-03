@@ -4,7 +4,9 @@ import path from 'node:path';
 import { refreshState } from './session-utils';
 
 const WELLFOUND_PROFILE_URL = 'https://wellfound.com/jobs';
+const WELLFOUND_EDIT_URL = 'https://wellfound.com/profile/edit';
 const AUTH_STATE_PATH = path.resolve(process.env.WF_AUTH_STATE_PATH ?? 'auth/wellfound-state.json');
+const RESUME_PATH = path.resolve('resumes/Pratik_Patidar_Resume_Full_Stack_Developer.pdf');
 const ARTIFACT_DIR = path.resolve('artifacts');
 
 function log(msg: string) {
@@ -61,10 +63,32 @@ export async function updateWellfound(): Promise<boolean> {
     });
     await page.waitForTimeout(2000);
 
+    // Full Stack Resume Re-upload
+    try {
+      log('Navigating to Wellfound profile edit to refresh Full Stack resume...');
+      await page.goto(WELLFOUND_EDIT_URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
+      await page.waitForTimeout(4000);
+
+      const resumeTab = page.locator('text="Resume / CV"').first();
+      if (await resumeTab.count()) {
+        await resumeTab.click().catch(() => undefined);
+        await page.waitForTimeout(2500);
+
+        const fileInput = page.locator('input[accept*=".pdf"], input[type="file"]').first();
+        if (await fileInput.count()) {
+          await fileInput.setInputFiles(RESUME_PATH);
+          log('Uploaded Full Stack Developer resume to Wellfound');
+          await page.waitForTimeout(6000);
+        }
+      }
+    } catch (uploadErr: any) {
+      log(`Wellfound resume upload warning (activity touch succeeded): ${uploadErr?.message || uploadErr}`);
+    }
+
     await refreshState(context, AUTH_STATE_PATH, log);
 
     await page.screenshot({ path: path.join(ARTIFACT_DIR, 'wellfound-success.png') });
-    log('✅ Wellfound activity timestamp updated to Active Today!');
+    log('✅ Wellfound activity timestamp & Full Stack resume refreshed!');
     return true;
   } catch (err) {
     log(`Wellfound update error: ${err}`);

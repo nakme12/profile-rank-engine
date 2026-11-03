@@ -48,13 +48,13 @@ async function main() {
     await run('naukri', 'Naukri', '✅ Success (Resume & headline refreshed)', updateNaukri);
 
     // 2. INSTAHYRE (2 times: Morning ~7:45 AM & Afternoon ~1:15 PM)
-    await run('instahyre', 'Instahyre', '✅ Success (Candidate status refreshed)', updateInstahyre);
+    await run('instahyre', 'Instahyre', '✅ Success (Full Stack resume & search status refreshed)', updateInstahyre);
 
     // 3. CUTSHORT (2 times: Morning ~7:45 AM & Afternoon ~1:15 PM)
-    await run('cutshort', 'Cutshort', '✅ Success (Active Candidate status refreshed)', updateCutshort);
+    await run('cutshort', 'Cutshort', '✅ Success (Full Stack resume & active status refreshed)', updateCutshort);
 
     // 4. HIRIST (2 times: Morning ~7:45 AM & Afternoon ~1:15 PM)
-    await run('hirist', 'Hirist', '✅ Success (Jobfeed activity refreshed)', updateHirist);
+    await run('hirist', 'Hirist', '✅ Success (Full-Stack tech feed & activity refreshed)', updateHirist);
 
     // 5. FOUNDIT (2 times: Morning ~7:45 AM & Afternoon ~1:15 PM)
     await run('foundit', 'Foundit', '✅ Success (Resume & profile refreshed)', updateFoundit);
@@ -65,7 +65,7 @@ async function main() {
 
   // 7. WELLFOUND (2 times: Afternoon ~1:15 PM & Evening ~5:45 PM for US/Remote founders)
   if (wellfoundShift) {
-    await run('wellfound', 'Wellfound', '✅ Success (Activity & preferences refreshed)', updateWellfound);
+    await run('wellfound', 'Wellfound', '✅ Success (Full Stack resume & preferences refreshed)', updateWellfound);
   }
 
   console.log(`\n======================================================`);

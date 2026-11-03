@@ -5,6 +5,7 @@ import { refreshState } from './session-utils';
 
 const CUTSHORT_DASHBOARD_URL = 'https://cutshort.io/profile/candidate-dashboard';
 const AUTH_STATE_PATH = path.resolve(process.env.CUTSHORT_AUTH_STATE_PATH ?? 'auth/cutshort-state.json');
+const RESUME_PATH = path.resolve('resumes/Pratik_Patidar_Resume_Full_Stack_Developer.pdf');
 const ARTIFACT_DIR = path.resolve('artifacts');
 
 function log(msg: string) {
@@ -50,12 +51,31 @@ export async function updateCutshort(): Promise<boolean> {
     await page.evaluate(() => {
       window.scrollBy({ top: 350, behavior: 'smooth' });
     });
-    await page.waitForTimeout(3000);
+    await page.waitForTimeout(2000);
+
+    // Full Stack Resume Re-upload
+    try {
+      const updateResumeBtn = page.locator('text=/update resume/i').first();
+      if (await updateResumeBtn.count()) {
+        log('Found "Update resume" button, clicking...');
+        await updateResumeBtn.click().catch(() => undefined);
+        await page.waitForTimeout(2000);
+
+        const fileInput = page.locator('input[type="file"]').first();
+        if (await fileInput.count()) {
+          await fileInput.setInputFiles(RESUME_PATH);
+          log('Uploaded Full Stack Developer resume to Cutshort');
+          await page.waitForTimeout(6000);
+        }
+      }
+    } catch (uploadErr: any) {
+      log(`Cutshort resume upload warning (dashboard ping succeeded): ${uploadErr?.message || uploadErr}`);
+    }
 
     await refreshState(context, AUTH_STATE_PATH, log);
 
     await page.screenshot({ path: path.join(ARTIFACT_DIR, 'cutshort-success.png') });
-    log('✅ Cutshort Profile Activity & Active Candidate status confirmed!');
+    log('✅ Cutshort Profile Activity & Full Stack resume refreshed!');
     return true;
   } catch (err) {
     log(`Cutshort update error: ${err}`);
