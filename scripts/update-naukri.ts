@@ -8,7 +8,7 @@ const RESUME_PATH = path.resolve(process.env.NAUKRI_RESUME_PATH ?? 'resumes/Prat
 const AUTH_STATE_PATH = path.resolve(process.env.AUTH_STATE_PATH ?? 'auth/naukri-state.json');
 const ARTIFACT_DIR = path.resolve('artifacts');
 
-export const CANONICAL_HEADLINE = "Full Stack Developer | MERN Stack | React.js | Node.js | TypeScript | 1.5+ Years Exp";
+export const CANONICAL_HEADLINE = "Full Stack Developer | MERN Stack | React.js | Node.js | TypeScript | 2+ Years Exp";
 
 function log(msg: string) {
   console.log(`[Naukri-Engine] ${new Date().toISOString()} ${msg}`);
@@ -116,19 +116,27 @@ export async function updateNaukri(): Promise<boolean> {
       }
     }
 
-    // 3. Update Headline to Full Stack Developer if editable
+    // 3. Update Headline to Full Stack Developer (2+ Years Exp)
     try {
-      const editHeadlineBtn = page.locator('.resumeHeadline .edit, .resumeHeadline span.icon, span:has-text("editOneTheme")').first();
+      const editHeadlineBtn = page.locator('span[aria-label="Edit resume headline"], .widgetHead:has-text("Resume headline") span.edit').first();
       if (await editHeadlineBtn.isVisible().catch(() => false)) {
         await editHeadlineBtn.click().catch(() => undefined);
         await page.waitForTimeout(1500);
-        const headlineTextarea = page.locator('textarea#resumeHeadlineTxt, textarea.resumeHeadlineTxt').first();
+        const headlineTextarea = page.locator('textarea#resumeHeadlineTxt, textarea.fue__text-area').first();
         if (await headlineTextarea.isVisible().catch(() => false)) {
-          await headlineTextarea.fill(CANONICAL_HEADLINE);
-          const saveHeadlineBtn = page.locator('button:has-text("Save")').first();
-          if (await saveHeadlineBtn.isVisible().catch(() => false)) {
-            await saveHeadlineBtn.click().catch(() => undefined);
-            log(`Updated Naukri Headline to: "${CANONICAL_HEADLINE}"`);
+          const currentVal = await headlineTextarea.inputValue().catch(() => '');
+          if (currentVal !== CANONICAL_HEADLINE) {
+            await headlineTextarea.fill(CANONICAL_HEADLINE);
+            const saveHeadlineBtn = page.locator('form[name="resumeHeadlineForm"] button:has-text("Save"), button:has-text("Save")').first();
+            if (await saveHeadlineBtn.isVisible().catch(() => false)) {
+              await saveHeadlineBtn.click().catch(() => undefined);
+              log(`Updated Naukri Headline to: "${CANONICAL_HEADLINE}"`);
+              await page.waitForTimeout(2000);
+            }
+          } else {
+            log('Naukri Headline already up to date with 2+ Years Exp');
+            const cancelBtn = page.locator('form[name="resumeHeadlineForm"] a:has-text("Cancel"), a:has-text("Cancel")').first();
+            await cancelBtn.click().catch(() => undefined);
           }
         }
       }

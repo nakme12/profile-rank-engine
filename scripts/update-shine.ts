@@ -9,7 +9,7 @@ const AUTH_STATE_PATH = path.resolve(process.env.SHINE_AUTH_STATE_PATH ?? 'auth/
 const RESUME_PATH = path.resolve(process.env.SHINE_RESUME_PATH ?? 'resumes/Pratik_Patidar_Resume_Full_Stack_Developer.pdf');
 const ARTIFACT_DIR = path.resolve('artifacts');
 
-export const CANONICAL_HEADLINE = "Full Stack Developer | MERN Stack | React.js | Node.js | TypeScript | 1.5+ Years Exp";
+export const CANONICAL_HEADLINE = "Full Stack Developer | MERN Stack | React.js | Node.js | TypeScript | 2+ Years Exp";
 
 function log(msg: string) {
   console.log(`[Shine-Engine] ${new Date().toISOString()} ${msg}`);

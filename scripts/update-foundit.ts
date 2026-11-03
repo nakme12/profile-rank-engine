@@ -15,7 +15,7 @@ const RESUME_PATH = path.resolve(process.env.FOUNDIT_RESUME_PATH ?? 'resumes/Pra
 const AUTH_STATE_PATH = path.resolve(process.env.FOUNDIT_AUTH_STATE_PATH ?? 'auth/foundit-state.json');
 const ARTIFACT_DIR = path.resolve('artifacts');
 
-export const CANONICAL_HEADLINE = "Full Stack Developer | MERN Stack | React.js | Node.js | TypeScript | 1.5+ Years Exp";
+export const CANONICAL_HEADLINE = "Full Stack Developer | MERN Stack | React.js | Node.js | TypeScript | 2+ Years Exp";
 
 function log(msg: string) {
   console.log(`[Foundit-Engine] ${new Date().toISOString()} ${msg}`);
