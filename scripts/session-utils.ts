@@ -5,7 +5,7 @@ import path from 'node:path';
 // Shared session helpers used by capture-session.ts / verify-sessions.ts
 // (Existing update-*.ts engines only import refreshState, so their behaviour is unchanged.)
 
-export type PlatformKey = 'naukri' | 'instahyre' | 'cutshort' | 'hirist' | 'foundit' | 'wellfound' | 'linkedin' | 'shine';
+export type PlatformKey = 'naukri' | 'instahyre' | 'cutshort' | 'hirist' | 'foundit' | 'wellfound' | 'shine';
 
 export interface PlatformConfig {
   key: PlatformKey;
@@ -73,15 +73,6 @@ export const PLATFORMS: Record<PlatformKey, PlatformConfig> = {
     authStateFile: 'auth/wellfound-state.json',
     loggedInPatterns: ['Applied', 'Messages', 'Profile'],
     loggedInUrlPatterns: ['/jobs']
-  },
-  linkedin: {
-    key: 'linkedin',
-    label: 'LinkedIn',
-    loginUrl: 'https://www.linkedin.com/login',
-    profileUrl: 'https://www.linkedin.com/me/',
-    authStateFile: 'auth/linkedin-state.json',
-    loggedInPatterns: ['dashboard', 'My Network', 'Jobs'],
-    loggedInUrlPatterns: ['/feed', '/in/']
   },
   shine: {
     key: 'shine',

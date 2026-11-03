@@ -1,7 +1,7 @@
 {
   "name": "profile-rank-engine",
   "version": "1.0.0",
-  "description": "Autonomous Multi-Platform Daily Profile Rank Booster (Naukri, Instahyre, Wellfound, LinkedIn)",
+  "description": "Autonomous Multi-Platform Daily Profile Rank Booster (Naukri, Instahyre, Wellfound, Foundit, Cutshort, Hirist, Shine)",
   "main": "scripts/update-all.ts",
   "scripts": {
     "setup:naukri": "tsx scripts/setup-session.ts naukri",
