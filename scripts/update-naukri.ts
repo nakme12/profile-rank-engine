@@ -14,18 +14,25 @@ function log(msg: string) {
   console.log(`[Naukri-Engine] ${new Date().toISOString()} ${msg}`);
 }
 
-async function findResumeInput(page: Page) {
+async function findResumeInput(page: Page, timeoutMs = 30000) {
   const selectors = [
-    'input[type="file"]',
     '#attachCV',
+    'input[type="file"]',
     'input[name="resume"]',
     'input[name="attachCV"]'
   ];
-  for (const s of selectors) {
-    const loc = page.locator(s).first();
-    if (await loc.count()) return loc;
+  
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    for (const s of selectors) {
+      const loc = page.locator(s).first();
+      if ((await loc.count().catch(() => 0)) > 0) return loc;
+    }
+    // Natural human scrolling to trigger lazy-loaded sections
+    await page.evaluate(() => window.scrollBy(0, 300)).catch(() => undefined);
+    await page.waitForTimeout(1000);
   }
-  throw new Error('Naukri resume file input not found');
+  throw new Error('Naukri resume file input not found (session may be expired — please re-run `npm run setup:naukri`)');
 }
 
 export async function updateNaukri(): Promise<boolean> {
