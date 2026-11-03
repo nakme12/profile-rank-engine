@@ -14,9 +14,9 @@ function log(msg) {
 }
 
 const SHIFTS = [
-  { name: 'morning', hour: 8, minute: 45 },
-  { name: 'afternoon', hour: 14, minute: 15 },
-  { name: 'evening', hour: 18, minute: 45 }
+  { name: 'morning', hour: 7, minute: 45 },
+  { name: 'afternoon', hour: 13, minute: 15 },
+  { name: 'evening', hour: 17, minute: 45 }
 ];
 
 function loadState() {

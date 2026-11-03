@@ -3,16 +3,16 @@ name: Daily Multi-Platform Profile Rank Booster
 on:
   schedule:
     # 1. MORNING SHIFT (India Golden Window):
-    # Triggers at 8:45 AM IST (3:15 AM UTC) -> Runs Naukri, Instahyre, Cutshort (Run 1/2)
-    - cron: '15 3 * * *'
+    # Triggers at 7:45 AM IST (2:15 AM UTC) -> Runs Naukri, Instahyre, Cutshort, Hirist, Foundit, Shine
+    - cron: '15 2 * * *'
 
     # 2. AFTERNOON SHIFT (Post-Lunch & India/Wellfound Overlap):
-    # Triggers at 2:15 PM IST (8:45 AM UTC) -> Runs Naukri, Instahyre, Cutshort (Run 2/2) + Wellfound (Run 1/2)
-    - cron: '45 8 * * *'
+    # Triggers at 1:15 PM IST (7:45 AM UTC) -> Runs Naukri, Instahyre, Cutshort, Hirist, Foundit, Shine + Wellfound
+    - cron: '45 7 * * *'
 
     # 3. EVENING SHIFT (US & Europe Founder Morning Window):
-    # Triggers at 6:45 PM IST (1:15 PM UTC) -> Runs Wellfound (Run 2/2)
-    - cron: '15 13 * * *'
+    # Triggers at 5:45 PM IST (12:15 PM UTC) -> Runs Wellfound
+    - cron: '15 12 * * *'
 
   # Manual on-demand trigger (from GitHub Mobile App or Web)
   workflow_dispatch:
@@ -81,9 +81,9 @@ jobs:
           else
             # Automated cron - determine shift
             HOUR=$(date -u +%H)
-            if [ "$HOUR" -ge 2 ] && [ "$HOUR" -le 5 ]; then
+            if [ "$HOUR" -ge 1 ] && [ "$HOUR" -le 4 ]; then
               echo "TARGET_MODE=morning" >> $GITHUB_ENV
-            elif [ "$HOUR" -ge 7 ] && [ "$HOUR" -le 10 ]; then
+            elif [ "$HOUR" -ge 6 ] && [ "$HOUR" -le 10 ]; then
               echo "TARGET_MODE=afternoon" >> $GITHUB_ENV
             else
               echo "TARGET_MODE=evening" >> $GITHUB_ENV

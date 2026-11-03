@@ -44,26 +44,26 @@ async function main() {
   const wellfoundShift = ['all', 'afternoon', 'evening'].includes(targetMode);
 
   if (indiaShift) {
-    // 1. NAUKRI (2 times: Morning ~9 AM & Afternoon ~2:30 PM)
+    // 1. NAUKRI (2 times: Morning ~7:45 AM & Afternoon ~1:15 PM)
     await run('naukri', 'Naukri', '✅ Success (Resume & headline refreshed)', updateNaukri);
 
-    // 2. INSTAHYRE (2 times: Morning ~9 AM & Afternoon ~2:30 PM)
+    // 2. INSTAHYRE (2 times: Morning ~7:45 AM & Afternoon ~1:15 PM)
     await run('instahyre', 'Instahyre', '✅ Success (Candidate status refreshed)', updateInstahyre);
 
-    // 3. CUTSHORT (2 times: Morning ~9 AM & Afternoon ~2:30 PM)
+    // 3. CUTSHORT (2 times: Morning ~7:45 AM & Afternoon ~1:15 PM)
     await run('cutshort', 'Cutshort', '✅ Success (Active Candidate status refreshed)', updateCutshort);
 
-    // 4. HIRIST (2 times: Morning ~9 AM & Afternoon ~2:30 PM)
+    // 4. HIRIST (2 times: Morning ~7:45 AM & Afternoon ~1:15 PM)
     await run('hirist', 'Hirist', '✅ Success (Jobfeed activity refreshed)', updateHirist);
 
-    // 5. FOUNDIT (2 times: Morning ~9 AM & Afternoon ~2:30 PM)
+    // 5. FOUNDIT (2 times: Morning ~7:45 AM & Afternoon ~1:15 PM)
     await run('foundit', 'Foundit', '✅ Success (Resume & profile refreshed)', updateFoundit);
 
-    // 6. SHINE (2 times: Morning ~9 AM & Afternoon ~2:30 PM)
+    // 6. SHINE (2 times: Morning ~7:45 AM & Afternoon ~1:15 PM)
     await run('shine', 'Shine', '✅ Success (Resume & profile refreshed)', updateShine);
   }
 
-  // 6. WELLFOUND (2 times: Afternoon ~2:30 PM & Evening ~7:00 PM for US/Remote founders)
+  // 7. WELLFOUND (2 times: Afternoon ~1:15 PM & Evening ~5:45 PM for US/Remote founders)
   if (wellfoundShift) {
     await run('wellfound', 'Wellfound', '✅ Success (Activity & preferences refreshed)', updateWellfound);
   }
