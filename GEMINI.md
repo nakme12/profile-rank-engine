@@ -9,7 +9,7 @@
 * **Candidate:** Pratik Patidar (Indore, Madhya Pradesh)
 * **Experience Tier:** 0–2 YOE (Fresher, Associate, Junior, SDE-1)
 * **Core Tech Stack:** React.js, Next.js, TypeScript, JavaScript, Node.js, Express, Tailwind CSS, Redux, Frontend-heavy Full Stack.
-* **Location Priority:** Indore top priority, followed by Remote and Major Hubs (Bangalore, Pune, Delhi-NCR, Hyderabad).
+* **Location Priority:** Pan-India (All India / Any Location in India / Remote, Indore top priority for local match).
 
 ### Hard Exclusions (Strict Reject):
 * **Senior / Lead / Architect Roles:** > 2 YOE, Senior, Lead, Staff, Principal, Architect, Manager, SDE-2, SDE-3.
