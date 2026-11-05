@@ -3,16 +3,16 @@ name: Daily Multi-Platform Profile Rank Booster
 on:
   schedule:
     # 1. MORNING SHIFT (India Golden Window):
-    # Triggers at 7:45 AM IST (2:15 AM UTC) -> Runs Naukri, Instahyre, Cutshort, Hirist, Foundit, Shine
-    - cron: '15 2 * * *'
+    # Odd-minute schedule (7:07 AM IST / 1:37 AM UTC) to bypass GitHub Actions traffic jam
+    - cron: '37 1 * * *'
 
     # 2. AFTERNOON SHIFT (Post-Lunch & India/Wellfound Overlap):
-    # Triggers at 1:15 PM IST (7:45 AM UTC) -> Runs Naukri, Instahyre, Cutshort, Hirist, Foundit, Shine + Wellfound
-    - cron: '45 7 * * *'
+    # Odd-minute schedule (12:53 PM IST / 7:23 AM UTC)
+    - cron: '23 7 * * *'
 
     # 3. EVENING SHIFT (US & Europe Founder Morning Window):
-    # Triggers at 5:45 PM IST (12:15 PM UTC) -> Runs Wellfound
-    - cron: '15 12 * * *'
+    # Odd-minute schedule (5:37 PM IST / 12:07 PM UTC) -> Runs Wellfound
+    - cron: '07 12 * * *'
 
   # Manual on-demand trigger (from GitHub Mobile App or Web)
   workflow_dispatch:
@@ -79,23 +79,39 @@ jobs:
             echo "TARGET_MODE=${SELECTED_MODE}" >> $GITHUB_ENV
             echo "Manual trigger mode: ${SELECTED_MODE} (No jitter delay)"
           else
-            # Automated cron - determine shift
-            HOUR=$(date -u +%H)
-            if [ "$HOUR" -ge 1 ] && [ "$HOUR" -le 4 ]; then
+            # Calculate current IST Time (UTC + 5:30)
+            UTC_H=$(date -u +%-H)
+            UTC_M=$(date -u +%-M)
+            TOTAL_MIN=$(( UTC_H * 60 + UTC_M + 330 ))
+            IST_H=$(( (TOTAL_MIN / 60) % 24 ))
+            IST_M=$(( TOTAL_MIN % 60 ))
+            echo "Current IST Time: ${IST_H}:${IST_M} (UTC: ${UTC_H}:${UTC_M})"
+
+            # Fail-closed night killswitch: abort delayed runs between 9:00 PM (21:00) and 6:30 AM IST
+            if [ "$IST_H" -ge 21 ] || [ "$IST_H" -lt 6 ] || ([ "$IST_H" -eq 6 ] && [ "$IST_M" -lt 30 ]); then
+              echo "🛑 NIGHT-TIME DETECTED IN INDIA (${IST_H}:${IST_M} IST)."
+              echo "GitHub cron delay resulted in an off-hours execution. Aborting to prevent useless night rank boosts."
+              echo "SKIP_RUN=true" >> $GITHUB_ENV
+              exit 0
+            fi
+
+            # Automated cron - determine shift based on live IST time
+            if [ "$IST_H" -ge 6 ] && [ "$IST_H" -lt 12 ]; then
               echo "TARGET_MODE=morning" >> $GITHUB_ENV
-            elif [ "$HOUR" -ge 6 ] && [ "$HOUR" -le 10 ]; then
+            elif [ "$IST_H" -ge 12 ] && [ "$IST_H" -lt 16 ]; then
               echo "TARGET_MODE=afternoon" >> $GITHUB_ENV
             else
               echo "TARGET_MODE=evening" >> $GITHUB_ENV
             fi
             
-            # Natural human jitter delay: 60s to 900s (1 to 15 minutes)
-            DELAY=$(( (RANDOM % 840) + 60 ))
+            # Natural human jitter delay: 60s to 600s (1 to 10 minutes)
+            DELAY=$(( (RANDOM % 540) + 60 ))
             echo "Simulating natural human timing. Sleeping for ${DELAY} seconds..."
             sleep ${DELAY}
           fi
 
       - name: Run Targeted Multi-Platform Rank Booster
+        if: env.SKIP_RUN != 'true'
         run: npx tsx scripts/update-all.ts "${{ env.TARGET_MODE }}"
         env:
           HEADLESS: 'true'
