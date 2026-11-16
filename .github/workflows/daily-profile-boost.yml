@@ -87,25 +87,17 @@ jobs:
             IST_M=$(( TOTAL_MIN % 60 ))
             echo "Current IST Time: ${IST_H}:${IST_M} (UTC: ${UTC_H}:${UTC_M})"
 
-            # Fail-closed night killswitch: abort delayed runs between 9:00 PM (21:00) and 6:30 AM IST
-            if [ "$IST_H" -ge 21 ] || [ "$IST_H" -lt 6 ] || ([ "$IST_H" -eq 6 ] && [ "$IST_M" -lt 30 ]); then
-              echo "🛑 NIGHT-TIME DETECTED IN INDIA (${IST_H}:${IST_M} IST)."
-              echo "GitHub cron delay resulted in an off-hours execution. Aborting to prevent useless night rank boosts."
-              echo "SKIP_RUN=true" >> $GITHUB_ENV
-              exit 0
-            fi
-
-            # Automated cron - determine shift based on live IST time
-            if [ "$IST_H" -ge 6 ] && [ "$IST_H" -lt 12 ]; then
+            # Smart Timezone Adaptor: Run target mode based on actual triggered IST hour
+            if [ "$IST_H" -ge 5 ] && [ "$IST_H" -lt 12 ]; then
               echo "TARGET_MODE=morning" >> $GITHUB_ENV
-            elif [ "$IST_H" -ge 12 ] && [ "$IST_H" -lt 16 ]; then
+            elif [ "$IST_H" -ge 12 ] && [ "$IST_H" -lt 17 ]; then
               echo "TARGET_MODE=afternoon" >> $GITHUB_ENV
             else
               echo "TARGET_MODE=evening" >> $GITHUB_ENV
             fi
             
-            # Natural human jitter delay: 60s to 600s (1 to 10 minutes)
-            DELAY=$(( (RANDOM % 540) + 60 ))
+            # Natural human jitter delay: 10s to 120s
+            DELAY=$(( (RANDOM % 110) + 10 ))
             echo "Simulating natural human timing. Sleeping for ${DELAY} seconds..."
             sleep ${DELAY}
           fi
