@@ -83,8 +83,17 @@ async function captureViaCdp(platform: PlatformKey, timeoutMin: number) {
   if (!context) throw new Error('No browser context over CDP. Is Brave running with --remote-debugging-port=9222?');
 
   log(`Connected to existing browser over CDP (${CDP_URL})`);
-  const page = await context.newPage();
-  const probe = await context.newPage();
+  let page: Page;
+  let probe: Page;
+  try {
+    page = await context.newPage();
+    probe = await context.newPage();
+  } catch {
+    const existing = context.pages();
+    if (existing.length === 0) throw new Error('No open pages in CDP browser and newPage() failed');
+    page = existing[0];
+    probe = existing[existing.length > 1 ? 1 : 0];
+  }
 
   const saveFrom = async (source: Page): Promise<string> => {
     const info = await saveStateForOrigin(context, source, origin, target);
